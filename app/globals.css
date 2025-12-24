@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+  
+  --font-sans: var(--font-outfit);
+}
+
+:root {
+  --background: 40 20% 98%; /* Warm off-white #faf9f6 */
+  --foreground: 0 0% 10%; /* Dark Charcoal */
+
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 10%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 10%;
+
+  --primary: 0 0% 10%;
+  --primary-foreground: 40 20% 98%;
+
+  --secondary: 40 10% 94%;
+  --secondary-foreground: 0 0% 10%;
+
+  --muted: 40 10% 94%;
+  --muted-foreground: 0 0% 45%;
+
+  --accent: 40 20% 96%;
+  --accent-foreground: 0 0% 10%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 0 0% 90%;
+  --input: 0 0% 90%;
+  --ring: 0 0% 10%;
+
+  --radius: 0rem; /* Sharp edges for luxury feel */
+}
+
+.dark {
+  --background: 0 0% 3%;
+  --foreground: 40 20% 98%;
+
+  --card: 0 0% 3%;
+  --card-foreground: 40 20% 98%;
+
+  --popover: 0 0% 3%;
+  --popover-foreground: 40 20% 98%;
+
+  --primary: 40 20% 98%;
+  --primary-foreground: 0 0% 9%;
+
+  --secondary: 0 0% 10%;
+  --secondary-foreground: 40 20% 98%;
+
+  --muted: 0 0% 10%;
+  --muted-foreground: 0 0% 60%;
+
+  --accent: 0 0% 10%;
+  --accent-foreground: 40 20% 98%;
+
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 0 0% 16%;
+  --input: 0 0% 16%;
+  --ring: 0 0% 80%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
