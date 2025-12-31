@@ -27,7 +27,7 @@ export default function CartPage() {
 
         if (result.valid) {
             applyCoupon(result.details!.code, result.discountAmount!);
-            setCouponMessage({ text: `Coupon applied: ${formatCurrency(result.discountAmount)} off`, type: "success" });
+            setCouponMessage({ text: `Coupon applied: ${formatCurrency(result.discountAmount!)} off`, type: "success" });
             setPromoCodeInput("");
         } else {
             setCouponMessage({ text: result.message || "Invalid coupon", type: "error" });
