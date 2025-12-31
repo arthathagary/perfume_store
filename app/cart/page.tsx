@@ -26,7 +26,7 @@ export default function CartPage() {
         const result = await validateCoupon(promoCodeInput, totalAmount);
 
         if (result.valid) {
-            applyCoupon(result.details.code, result.discountAmount);
+            applyCoupon(result.details!.code, result.discountAmount!);
             setCouponMessage({ text: `Coupon applied: ${formatCurrency(result.discountAmount)} off`, type: "success" });
             setPromoCodeInput("");
         } else {
