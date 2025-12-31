@@ -13,10 +13,10 @@ export default function LegalPage() {
                         <section className="mb-10">
                             <h2 className="text-xl font-medium text-foreground mb-4">Terms of Service</h2>
                             <p className="mb-4">
-                                Welcome to LUXE SCENTS. By accessing our website, you agree to these terms. We reserve the right to modify these terms at any time.
+                                Welcome to Atelier Voile. By accessing our website, you agree to these terms. We reserve the right to modify these terms at any time.
                             </p>
                             <p>
-                                All content on this site, including images and text, is the property of LUXE SCENTS and may not be used without permission.
+                                All content on this site, including images and text, is the property of Atelier Voile and may not be used without permission.
                             </p>
                         </section>
 

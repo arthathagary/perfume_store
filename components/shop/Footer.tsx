@@ -7,10 +7,10 @@ export function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
                     {/* Brand Section */}
                     <div className="md:col-span-4 space-y-6">
-                        <h2 className="text-2xl font-serif tracking-tight">LUXE SCENTS</h2>
+                        <h2 className="text-2xl font-serif tracking-tight">Atelier Voile</h2>
                         <p className="text-white/60 text-sm leading-relaxed max-w-xs font-light">
                             Crafting memories through scent. Sustainable, ethereal, and timeless fragrances for the modern soul.
-                            Designed in Paris, bottled with passion.
+                            Designed in Sri Lanka, bottled with passion.
                         </p>
                         <div className="flex gap-4">
                             {/* Social Icons Placeholder */}
@@ -24,10 +24,7 @@ export function Footer() {
                     <div className="md:col-span-2 md:col-start-6">
                         <h3 className="text-xs font-bold uppercase tracking-[0.2em] mb-6 text-white/40">Shop</h3>
                         <ul className="space-y-4 text-sm text-white/70 font-light">
-                            <li><Link href="/products" className="hover:text-white transition-colors">All Perfumes</Link></li>
-                            <li><Link href="/new" className="hover:text-white transition-colors">New Arrivals</Link></li>
-                            <li><Link href="/sets" className="hover:text-white transition-colors">Gift Sets</Link></li>
-                            <li><Link href="/exclusive" className="hover:text-white transition-colors">Exclusives</Link></li>
+                            <li><Link href="/products" className="hover:text-white transition-colors">Shop All</Link></li>
                         </ul>
                     </div>
 
@@ -60,9 +57,9 @@ export function Footer() {
                 </div>
 
                 <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/30 font-light">
-                    <p>&copy; {new Date().getFullYear()} Luxe Scents. All rights reserved.</p>
+                    <p>&copy; {new Date().getFullYear()} Atelier Voile. All rights reserved.</p>
                     <div className="flex gap-6">
-                        <span>Currency: USD</span>
+                        <span>Currency: LKR</span>
                         <span>Language: EN</span>
                     </div>
                 </div>

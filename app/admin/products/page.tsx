@@ -37,11 +37,20 @@ export default async function ProductsPage() {
                                     </td>
                                 </tr>
                             ) : (
-                                products.map((product: { _id: string; name: string; category: string; price: number }) => (
+                                products.map((product: { _id: string; name: string; category: string; price: number; offerPrice?: number }) => (
                                     <tr key={product._id} className="border-b border-border transition-colors hover:bg-muted/50">
                                         <td className="p-4 align-middle font-medium">{product.name}</td>
                                         <td className="p-4 align-middle">{product.category}</td>
-                                        <td className="p-4 align-middle">${product.price.toFixed(2)}</td>
+                                        <td className="p-4 align-middle">
+                                            {product.offerPrice ? (
+                                                <div className="flex flex-col">
+                                                    <span className="text-destructive font-medium">${product.offerPrice.toFixed(2)}</span>
+                                                    <span className="text-xs text-muted-foreground line-through">${product.price.toFixed(2)}</span>
+                                                </div>
+                                            ) : (
+                                                <span>${product.price.toFixed(2)}</span>
+                                            )}
+                                        </td>
                                         <td className="p-4 align-middle text-right">
                                             <div className="flex items-center justify-end gap-2">
                                                 <Link href={`/admin/products/${product._id}/edit`}>

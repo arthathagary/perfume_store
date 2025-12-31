@@ -5,7 +5,7 @@ import { getProducts } from "@/lib/actions/product-actions";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Gift Sets | LUXE SCENTS",
+    title: "Gift Sets | Atelier Voile",
     description: "Curated perfume sets for the perfect gift.",
 };
 

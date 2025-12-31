@@ -11,6 +11,7 @@ interface CreateOrderData {
         email: string;
     };
     items: {
+        productId: string;
         name: string;
         price: number;
         quantity: number;
@@ -20,10 +21,24 @@ interface CreateOrderData {
     userId?: string; // Optional user link
 }
 
+import { Product } from "@/lib/models/Product";
+
 export async function createOrder(data: CreateOrderData) {
     try {
         await dbConnect();
+
+        // 1. Create the Order
         const order = await Order.create(data);
+
+        // 2. Reduce Stock for each item
+        for (const item of data.items) {
+            await Product.findByIdAndUpdate(item.productId, {
+                $inc: { stock: -item.quantity }
+            });
+        }
+
+        revalidatePath("/admin/products"); // Update product list to show new stock
+        revalidatePath("/"); // Update storefront
         revalidatePath("/admin/orders");
         return { success: true, orderId: order._id.toString() };
     } catch (error) {

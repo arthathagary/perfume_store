@@ -10,6 +10,7 @@ import { Loader2, Package, User, MapPin } from "lucide-react";
 import { getUserProfile, updateUserProfile } from "@/lib/actions/user-actions";
 import { getUserOrders } from "@/lib/actions/order-actions";
 import Link from "next/link";
+import { formatCurrency } from "@/lib/utils";
 
 export default function AccountPage() {
     const { data: session, status } = useSession();
@@ -231,7 +232,7 @@ export default function AccountPage() {
                                                             Placed on {new Date(order.createdAt).toLocaleDateString()}
                                                         </p>
                                                         <p className="text-sm mt-1">
-                                                            {order.items.length} item(s) • ${order.total.toFixed(2)}
+                                                            {order.items.length} item(s) • {formatCurrency(order.total)}
                                                         </p>
                                                     </div>
                                                     <Button variant="outline" size="sm" disabled>

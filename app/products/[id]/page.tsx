@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     if (!product) return { title: "Product Not Found" };
 
     return {
-        title: `${product.name} | LUXE SCENTS`,
+        title: `${product.name} | Atelier Voile`,
         description: product.description,
     };
 }

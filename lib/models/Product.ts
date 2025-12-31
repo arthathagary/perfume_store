@@ -9,6 +9,10 @@ const ProductSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    offerPrice: {
+        type: Number,
+        default: null,
+    },
     description: {
         type: String,
         required: true,
@@ -35,6 +39,10 @@ const ProductSchema = new mongoose.Schema({
         default: 0,
     },
     isActive: {
+        type: Boolean,
+        default: true,
+    },
+    showStock: {
         type: Boolean,
         default: true,
     },

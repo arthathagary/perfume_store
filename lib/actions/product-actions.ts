@@ -9,6 +9,7 @@ export interface ProductData {
     name: string;
     description: string;
     price: number;
+    offerPrice?: number | null;
     category: string;
     notes: {
         top: string;
@@ -21,12 +22,16 @@ export interface ProductData {
         concentration: string;
     };
     images: string[];
+    stock?: number;
+    showStock?: boolean;
 }
 
 export async function createProduct(data: ProductData) {
     try {
         await dbConnect();
+        console.log("Creating product with data:", JSON.stringify(data, null, 2));
         const newProduct = await Product.create(data);
+        console.log("Created product result:", JSON.stringify(newProduct, null, 2));
         revalidatePath("/admin/products");
         revalidatePath("/"); // Update storefront too
         return { success: true, product: JSON.parse(JSON.stringify(newProduct)) };
@@ -76,7 +81,9 @@ export async function getProductById(id: string) {
 export async function updateProduct(id: string, data: ProductData) {
     try {
         await dbConnect();
+        console.log("Updating product with data:", JSON.stringify(data, null, 2));
         const updatedProduct = await Product.findByIdAndUpdate(id, data, { new: true });
+        console.log("Updated product result:", JSON.stringify(updatedProduct, null, 2));
         revalidatePath("/admin/products");
         revalidatePath("/");
         revalidatePath(`/products/${id}`);

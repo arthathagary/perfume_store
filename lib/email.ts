@@ -22,24 +22,25 @@ export async function sendOrderUpdateEmail(to: string, orderId: string, status: 
         const html = `
             <div style="font-family: sans-serif; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
                 <div style="background-color: #000; color: #fff; padding: 20px; text-align: center;">
-                    <h1 style="margin: 0; font-weight: 300; letter-spacing: 1px;">LUXE SCENTS</h1>
+                    <h1 style="margin: 0; font-weight: 300; letter-spacing: 1px;">Atelier Voile</h1>
                 </div>
                 <div style="padding: 30px;">
                     <p>Dear ${name},</p>
                     <p>The status of your order <strong>#${orderId.substring(0, 8)}</strong> has been updated to:</p>
                     <div style="background-color: #f3f4f6; padding: 15px; text-align: center; border-radius: 4px; margin: 20px 0;">
-                        <span style="font-size: 18px; font-weight: 600; text-transform: uppercase; color: #000;">${status}</span>
+                    <span style="font-size: 18px; font-weight: 600; text-transform: uppercase; color: #000;">${status}</span>
                     </div>
-                    <p>Thank you for choosing Luxe Scents.</p>
+                    <p>Thank you for choosing Atelier Voile.</p>
                 </div>
                 <div style="background-color: #f9fafb; padding: 20px; text-align: center; font-size: 12px; color: #6b7280;">
-                    &copy; ${new Date().getFullYear()} Luxe Scents. All rights reserved.
+                    <p style="margin: 0 0 10px 0;">&copy; ${new Date().getFullYear()} Atelier Voile. All rights reserved.</p>
+                    <p style="margin: 0;">Jawa Street, Kinniya, Sri Lanka</p>
                 </div>
             </div>
         `;
 
         await transporter.sendMail({
-            from: process.env.SMTP_FROM || '"Luxe Scents" <noreply@luxescents.com>',
+            from: process.env.SMTP_FROM || '"Atelier Voile" <noreply@ateliervoile.com>',
             to,
             subject,
             html,
@@ -63,7 +64,7 @@ export async function sendPasswordResetEmail(to: string, token: string) {
         const html = `
             <div style="font-family: sans-serif; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
                 <div style="background-color: #000; color: #fff; padding: 20px; text-align: center;">
-                    <h1 style="margin: 0; font-weight: 300; letter-spacing: 1px;">LUXE SCENTS</h1>
+                    <h1 style="margin: 0; font-weight: 300; letter-spacing: 1px;">Atelier Voile</h1>
                 </div>
                 <div style="padding: 30px;">
                     <p>Hello,</p>
@@ -73,12 +74,17 @@ export async function sendPasswordResetEmail(to: string, token: string) {
                     </div>
                     <p>This link will expire in 1 hour.</p>
                     <p>If you didn't request this, you can safely ignore this email.</p>
+                    </div>
+                <div style="background-color: #f9fafb; padding: 20px; text-align: center; font-size: 12px; color: #6b7280;">
+                    <p style="margin: 0 0 10px 0;">&copy; ${new Date().getFullYear()} Atelier Voile. All rights reserved.</p>
+                    <p style="margin: 0;">Jawa Street, Kinniya, Sri Lanka</p>
                 </div>
+            </div>
             </div>
         `;
 
         await transporter.sendMail({
-            from: process.env.SMTP_FROM || '"Luxe Scents" <noreply@luxescents.com>',
+            from: process.env.SMTP_FROM || '"Atelier Voile" <noreply@ateliervoile.com>',
             to,
             subject,
             html,

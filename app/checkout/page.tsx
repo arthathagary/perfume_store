@@ -6,11 +6,12 @@ import { Footer } from "@/components/shop/Footer";
 import { Button } from "@/components/ui/button";
 import { createOrder } from "@/lib/actions/order-actions";
 import { registerCustomer } from "@/lib/actions/auth-actions";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, CheckCircle } from "lucide-react";
-import { getDirectImageUrl } from "@/lib/utils";
+import { getDirectImageUrl, formatCurrency } from "@/lib/utils";
 import Image from "next/image";
+import { getUserProfile } from "@/lib/actions/user-actions";
 
 export default function CheckoutPage() {
     const { items, totalAmount, clearCart } = useCart();
@@ -18,6 +19,21 @@ export default function CheckoutPage() {
     const [loading, setLoading] = useState(false);
     const [redirecting, setRedirecting] = useState(false);
     const [createAccount, setCreateAccount] = useState(false);
+    const [userProfile, setUserProfile] = useState<any>(null);
+
+    useEffect(() => {
+        const loadUser = async () => {
+            try {
+                const profile = await getUserProfile();
+                if (profile) {
+                    setUserProfile(profile);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        };
+        loadUser();
+    }, []);
 
     if (items.length === 0 && !redirecting) {
         return (
@@ -53,10 +69,10 @@ export default function CheckoutPage() {
         const formData = new FormData(event.currentTarget);
         const email = formData.get("email") as string;
         const name = `${formData.get("firstName")} ${formData.get("lastName")}`;
-        let userId = undefined;
+        let userId = userProfile?._id || undefined;
 
-        // 1. Handle Account Creation if requested
-        if (createAccount) {
+        // 1. Handle Account Creation if requested and not logged in
+        if (createAccount && !userProfile) {
             const password = formData.get("password") as string;
             if (password) {
                 const registerResult = await registerCustomer(name, email, password);
@@ -69,6 +85,13 @@ export default function CheckoutPage() {
             }
         }
 
+        // 2. Update existing profile if logged in
+        if (userProfile) {
+            // Optional: Update user address if they changed it during checkout ??? 
+            // For now, let's just use the checkout details for the order.
+            // If we wanted to save back to profile, we'd call updateUserProfile here.
+        }
+
         const orderData = {
             customer: {
                 name,
@@ -77,13 +100,14 @@ export default function CheckoutPage() {
                 phone: formData.get("phone") as string
             },
             items: items.map(i => ({
+                productId: i.id,
                 name: i.name,
                 price: i.price,
                 quantity: i.quantity
             })),
             total: totalAmount,
             status: "pending" as const,
-            userId // Link order to new user if created
+            userId // Link order to new user if created or existing user
         };
 
         // Create Order in DB
@@ -106,6 +130,10 @@ export default function CheckoutPage() {
         }
     }
 
+    // Helper to split name
+    const firstName = userProfile?.name?.split(" ")[0] || "";
+    const lastName = userProfile?.name?.split(" ").slice(1).join(" ") || "";
+
     return (
         <div className="flex min-h-screen flex-col font-sans">
             <Header />
@@ -116,51 +144,63 @@ export default function CheckoutPage() {
                     <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
                         {/* Shipping Form */}
                         <div className="lg:col-span-7 space-y-8">
-                            <form id="checkout-form" onSubmit={handleSubmit} className="space-y-6">
+                            <form id="checkout-form" onSubmit={handleSubmit} className="space-y-6" key={userProfile?._id || 'guest'}>
                                 <div className="space-y-4">
                                     <h2 className="text-xl font-medium border-b border-border pb-2">Contact Information</h2>
                                     <div className="grid gap-2">
                                         <label className="text-sm">Email Address</label>
-                                        <input name="email" type="email" required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" placeholder="you@example.com" />
+                                        <input
+                                            name="email"
+                                            type="email"
+                                            required
+                                            defaultValue={userProfile?.email}
+                                            readOnly={!!userProfile}
+                                            className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${userProfile ? 'opacity-70 bg-secondary/10' : ''}`}
+                                            placeholder="you@example.com"
+                                        />
                                     </div>
                                     <div className="grid gap-2">
                                         <label className="text-sm">Phone</label>
-                                        <input name="phone" type="tel" required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+                                        <input name="phone" type="tel" required defaultValue={userProfile?.phone} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
                                     </div>
 
-                                    {/* Optional Account Creation */}
-                                    <div className="flex items-start gap-2 pt-2">
-                                        <div className="flex items-center h-5">
-                                            <input
-                                                id="create-account"
-                                                type="checkbox"
-                                                checked={createAccount}
-                                                onChange={(e) => setCreateAccount(e.target.checked)}
-                                                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                                            />
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <label htmlFor="create-account" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                                Create an account for faster checkout
-                                            </label>
-                                            <p className="text-[11px] text-muted-foreground mt-1">
-                                                Save your details for future purchases.
-                                            </p>
-                                        </div>
-                                    </div>
+                                    {/* Optional Account Creation - Hide if logged in */}
+                                    {!userProfile && (
+                                        <>
+                                            <div className="flex items-start gap-2 pt-2">
+                                                <div className="flex items-center h-5">
+                                                    <input
+                                                        id="create-account"
+                                                        type="checkbox"
+                                                        checked={createAccount}
+                                                        onChange={(e) => setCreateAccount(e.target.checked)}
+                                                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <label htmlFor="create-account" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                                        Create an account for faster checkout
+                                                    </label>
+                                                    <p className="text-[11px] text-muted-foreground mt-1">
+                                                        Save your details for future purchases.
+                                                    </p>
+                                                </div>
+                                            </div>
 
-                                    {createAccount && (
-                                        <div className="grid gap-2 pt-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                                            <label className="text-sm">Create Password</label>
-                                            <input
-                                                name="password"
-                                                type="password"
-                                                required={createAccount}
-                                                minLength={6}
-                                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                                placeholder="Minimum 6 characters"
-                                            />
-                                        </div>
+                                            {createAccount && (
+                                                <div className="grid gap-2 pt-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                                                    <label className="text-sm">Create Password</label>
+                                                    <input
+                                                        name="password"
+                                                        type="password"
+                                                        required={createAccount}
+                                                        minLength={6}
+                                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                                        placeholder="Minimum 6 characters"
+                                                    />
+                                                </div>
+                                            )}
+                                        </>
                                     )}
                                 </div>
 
@@ -169,25 +209,25 @@ export default function CheckoutPage() {
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="grid gap-2">
                                             <label className="text-sm">First Name</label>
-                                            <input name="firstName" required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+                                            <input name="firstName" required defaultValue={firstName} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
                                         </div>
                                         <div className="grid gap-2">
                                             <label className="text-sm">Last Name</label>
-                                            <input name="lastName" required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+                                            <input name="lastName" required defaultValue={lastName} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
                                         </div>
                                     </div>
                                     <div className="grid gap-2">
                                         <label className="text-sm">Address</label>
-                                        <input name="address" required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" placeholder="Street, Apt, etc." />
+                                        <input name="address" required defaultValue={userProfile?.address} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" placeholder="Street, Apt, etc." />
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="grid gap-2">
                                             <label className="text-sm">City</label>
-                                            <input name="city" required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+                                            <input name="city" required defaultValue={userProfile?.city} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
                                         </div>
                                         <div className="grid gap-2">
                                             <label className="text-sm">Zip / Postal Code</label>
-                                            <input name="zip" required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+                                            <input name="zip" required defaultValue={userProfile?.zip} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
                                         </div>
                                     </div>
                                 </div>
@@ -213,7 +253,7 @@ export default function CheckoutPage() {
                                             <div className="flex-1">
                                                 <h4 className="text-sm font-medium">{item.name}</h4>
                                                 <p className="text-xs text-muted-foreground">Qty: {item.quantity}</p>
-                                                <p className="text-sm">${(item.price * item.quantity).toFixed(2)}</p>
+                                                <p className="text-sm">{formatCurrency(item.price * item.quantity)}</p>
                                             </div>
                                         </div>
                                     ))}
@@ -222,7 +262,7 @@ export default function CheckoutPage() {
                                 <div className="border-t border-border pt-4 space-y-2">
                                     <div className="flex justify-between text-sm">
                                         <span>Subtotal</span>
-                                        <span>${totalAmount.toFixed(2)}</span>
+                                        <span>{formatCurrency(totalAmount)}</span>
                                     </div>
                                     <div className="flex justify-between text-sm">
                                         <span>Shipping</span>
@@ -230,7 +270,7 @@ export default function CheckoutPage() {
                                     </div>
                                     <div className="flex justify-between font-medium text-lg pt-2 border-t border-border/50">
                                         <span>Total</span>
-                                        <span>${totalAmount.toFixed(2)}</span>
+                                        <span>{formatCurrency(totalAmount)}</span>
                                     </div>
                                 </div>
 

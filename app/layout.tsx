@@ -12,17 +12,17 @@ const outfit = Outfit({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | LUXE SCENTS",
-    default: "LUXE SCENTS | Artisanal Perfumery",
+    template: "%s | Atelier Voile",
+    default: "Atelier Voile | Artisanal Perfumery",
   },
   description: "Discover our curated collection of artisanal, high-concentration fragrances using the world's finest ingredients.",
   keywords: ["perfume", "luxury fragrance", "artisanal scents", "niche perfume", "oud", "saffron"],
   openGraph: {
-    title: "LUXE SCENTS",
+    title: "Atelier Voile",
     description: "Artisanal fragrances for the distinct.",
     type: "website",
     locale: "en_US",
-    siteName: "LUXE SCENTS",
+    siteName: "Atelier Voile",
   },
 };
 

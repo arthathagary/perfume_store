@@ -17,77 +17,78 @@ export function Header() {
     const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
     const closeMenu = () => setIsMobileMenuOpen(false);
 
+    // Permanent styles as requested
+    const headerClass = "sticky top-0 z-50 w-full border-b border-black/5 bg-white/90 backdrop-blur-md text-black transition-all duration-300 shadow-sm";
+    const navLinkClass = "flex items-center text-sm font-medium text-black/70 transition-colors hover:text-black";
+    const iconButtonClass = "text-black hover:bg-black/5 hover:text-black";
+
+    // Dropdown styles
+    const dropdownClass = "bg-white border border-black/10 shadow-lg rounded-md overflow-hidden py-1 text-black";
+    const dropdownItemClass = "block px-4 py-2 text-sm hover:bg-black/5 transition-colors";
+
+    const dropdownBorderClass = "border-black/5";
+    const dropdownSubtextClass = "text-black/50";
+    const dropdownTextClass = "text-black";
+
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
+        <header className={headerClass}>
             <div className="container mx-auto flex h-16 max-w-screen-2xl items-center justify-between px-4 sm:px-8">
                 <div className="flex gap-6 md:gap-10">
                     <Link href="/" className="flex items-center space-x-2" onClick={closeMenu}>
-                        <span className="text-xl font-medium tracking-tight">LUXE SCENTS</span>
+                        <span className="text-xl font-medium tracking-tight">Atelier Voile</span>
                     </Link>
                     <nav className="hidden gap-6 md:flex">
-                        <Link
-                            href="/collections/new"
-                            className="flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-                        >
-                            New Arrivals
+                        <Link href="/products" className={navLinkClass}>
+                            Shop
                         </Link>
-                        <Link
-                            href="/collections/bestsellers"
-                            className="flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-                        >
-                            Bestsellers
-                        </Link>
-                        <Link
-                            href="/about"
-                            className="flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-                        >
+                        <Link href="/about" className={navLinkClass}>
                             Our Story
                         </Link>
                     </nav>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" className="md:hidden" onClick={toggleMenu}>
+                    <Button variant="ghost" size="icon" className={`md:hidden ${iconButtonClass}`} onClick={toggleMenu}>
                         <Menu className="h-5 w-5" />
                         <span className="sr-only">Menu</span>
                     </Button>
 
                     {/* User Menu */}
                     <div className="relative group">
-                        <Button variant="ghost" size="icon" className="hidden md:flex">
+                        <Button variant="ghost" size="icon" className={`hidden md:flex ${iconButtonClass}`}>
                             <UserIcon className="h-5 w-5" />
                             <span className="sr-only">Account</span>
                         </Button>
 
-                        {/* Hover Dropdown (Simple CSS Implementation for M1) */}
+                        {/* Hover Dropdown */}
                         <div className="absolute right-0 top-full pt-2 w-48 hidden group-hover:block hover:block">
-                            <div className="bg-background border border-border shadow-lg rounded-md overflow-hidden py-1">
+                            <div className={dropdownClass}>
                                 {session?.user ? (
                                     <>
-                                        <div className="px-4 py-2 border-b border-border/50">
-                                            <p className="text-sm font-medium truncate">{session.user.name}</p>
-                                            <p className="text-xs text-muted-foreground truncate">{session.user.email}</p>
+                                        <div className={`px-4 py-2 border-b ${dropdownBorderClass}`}>
+                                            <p className={`text-sm font-medium truncate ${dropdownTextClass}`}>{session.user.name}</p>
+                                            <p className={`text-xs truncate ${dropdownSubtextClass}`}>{session.user.email}</p>
                                         </div>
-                                        <Link href="/account" className="block px-4 py-2 text-sm hover:bg-muted transition-colors">
+                                        <Link href="/account" className={dropdownItemClass}>
                                             My Account
                                         </Link>
                                         {(session.user as any).role === 'admin' && (
-                                            <Link href="/admin/dashboard" className="block px-4 py-2 text-sm hover:bg-muted transition-colors">
+                                            <Link href="/admin/dashboard" className={dropdownItemClass}>
                                                 Admin Dashboard
                                             </Link>
                                         )}
                                         <button
                                             onClick={() => signOut()}
-                                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-muted transition-colors"
+                                            className="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-opacity-10 transition-colors hover:bg-red-50"
                                         >
                                             Logout
                                         </button>
                                     </>
                                 ) : (
                                     <>
-                                        <Link href="/login" className="block px-4 py-2 text-sm hover:bg-muted transition-colors">
+                                        <Link href="/login" className={dropdownItemClass}>
                                             Sign In
                                         </Link>
-                                        <Link href="/register" className="block px-4 py-2 text-sm hover:bg-muted transition-colors">
+                                        <Link href="/register" className={dropdownItemClass}>
                                             Create Account
                                         </Link>
                                     </>
@@ -97,10 +98,10 @@ export function Header() {
                     </div>
 
                     <Link href="/cart" className="relative">
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" className={iconButtonClass}>
                             <ShoppingBag className="h-5 w-5" />
                             {totalItems > 0 && (
-                                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
+                                <span className="absolute -top-1 -right-1 text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold bg-black text-white">
                                     {totalItems}
                                 </span>
                             )}
@@ -118,23 +119,16 @@ export function Header() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute top-16 left-0 w-full border-b border-border/40 bg-background/95 backdrop-blur-lg md:hidden"
+                        className="absolute top-16 left-0 w-full border-b border-border/40 bg-background/95 backdrop-blur-lg md:hidden text-foreground"
                     >
                         <div className="container mx-auto flex flex-col p-4 gap-4">
                             <nav className="flex flex-col gap-4">
                                 <Link
-                                    href="/collections/new"
+                                    href="/products"
                                     className="text-sm font-medium hover:text-primary py-2"
                                     onClick={closeMenu}
                                 >
-                                    New Arrivals
-                                </Link>
-                                <Link
-                                    href="/collections/bestsellers"
-                                    className="text-sm font-medium hover:text-primary py-2"
-                                    onClick={closeMenu}
-                                >
-                                    Bestsellers
+                                    Shop
                                 </Link>
                                 <Link
                                     href="/about"
@@ -145,7 +139,7 @@ export function Header() {
                                 </Link>
                             </nav>
                             <div className="border-t border-border/40 pt-4 mt-2">
-                                <Button variant="luxury" onClick={closeMenu} className="w-full justify-center">
+                                <Button variant="default" onClick={closeMenu} className="w-full justify-center">
                                     View Account
                                 </Button>
                             </div>

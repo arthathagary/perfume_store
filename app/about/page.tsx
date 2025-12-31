@@ -11,10 +11,10 @@ export default function AboutPage() {
 
                     <div className="prose prose-stone dark:prose-invert mx-auto text-lg leading-relaxed text-muted-foreground font-light">
                         <p className="mb-6 first-letter:text-5xl first-letter:font-serif first-letter:mr-1 first-letter:float-left first-letter:text-foreground">
-                            Founded in the heart of Grasse, LUXE SCENTS was born from a desire to return to the roots of perfumery: patience, precision, and passion. We reject the modern rush of mass production, choosing instead to honor the slow art of maceration.
+                            Founded in the heart of Sri Lanka, Atelier Voile was born from a desire to return to the roots of perfumery: patience, precision, and passion. We reject the modern rush of mass production, choosing instead to honor the slow art of maceration.
                         </p>
                         <p className="mb-6">
-                            Each bottle is a testament to the finest ingredients sourced from sustainable farms across the globe. From the rare Iris of Florence to the deep, resinous Oud of Cambodia, our materials are selected not for their cost, but for their character.
+                            Each bottle is a testament to the finest ingredients sourced from sustainable farms across the globe. From the rare spices of Ceylon to the deep, resinous Oud, our materials are selected not for their cost, but for their character.
                         </p>
                         <p>
                             We invite you to discover a scent that doesn&apos;t just linger on the room, but lingers in the memory.

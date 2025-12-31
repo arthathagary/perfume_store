@@ -5,7 +5,7 @@ import { getProducts } from "@/lib/actions/product-actions";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Shop All | LUXE SCENTS",
+    title: "Shop All | Atelier Voile",
     description: "Browse our complete collection of luxury fragrances.",
 };
 
@@ -43,7 +43,9 @@ export default async function ShopPage() {
                                         name: product.name,
                                         price: product.price,
                                         category: product.category,
-                                        image: product.images?.[0]
+                                        image: product.images?.[0],
+                                        stock: product.stock,
+                                        showStock: product.showStock
                                     }}
                                 />
                             ))}

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Clock, Wind, AlertCircle, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { getDirectImageUrl } from "@/lib/utils";
+import { getDirectImageUrl, formatCurrency } from "@/lib/utils";
 
 export default function ProductDetailClient({ product }: { product: any }) {
     const { addItem } = useCart();
@@ -19,7 +19,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
         addItem({
             id: product._id,
             name: product.name,
-            price: product.price,
+            price: product.offerPrice || product.price,
             image: product.images?.[0],
             quantity: 1,
             concentration: product.details?.concentration
@@ -59,9 +59,25 @@ export default function ProductDetailClient({ product }: { product: any }) {
                             <h1 className="text-4xl font-light tracking-tight text-foreground sm:text-5xl mb-6">
                                 {product.name}
                             </h1>
-                            <p className="text-xl text-primary font-medium mb-8">
-                                ${product.price.toFixed(2)}
-                            </p>
+                            <div className="flex items-center gap-4 mb-8">
+                                {product.offerPrice ? (
+                                    <>
+                                        <p className="text-3xl text-destructive font-medium">
+                                            {formatCurrency(product.offerPrice)}
+                                        </p>
+                                        <p className="text-xl text-muted-foreground line-through decoration-muted-foreground/50">
+                                            {formatCurrency(product.price)}
+                                        </p>
+                                        <div className="bg-primary text-primary-foreground text-sm uppercase font-bold tracking-wider px-3 py-1 rounded-sm">
+                                           {Math.round(((product.price - product.offerPrice) / product.price) * 100)}% OFF
+                                        </div>
+                                    </>
+                                ) : (
+                                    <p className="text-xl text-primary font-medium">
+                                        {formatCurrency(product.price)}
+                                    </p>
+                                )}
+                            </div>
 
                             <div className="prose prose-stone dark:prose-invert mb-10 text-muted-foreground leading-relaxed">
                                 <p>{product.description}</p>
@@ -105,17 +121,32 @@ export default function ProductDetailClient({ product }: { product: any }) {
                             </div>
 
                             <div className="flex flex-col gap-4">
+                                {/* Stock Availability Indicator */}
+                                {product.showStock && product.stock !== undefined && product.stock > 0 && (
+                                    <div className="flex items-center gap-2 text-amber-600 dark:text-amber-500 font-medium text-sm animate-pulse">
+                                        <AlertCircle className="h-4 w-4" />
+                                        <span>Only {product.stock} units left in stock</span>
+                                    </div>
+                                )}
+
+                                {product.stock !== undefined && product.stock === 0 && (
+                                    <div className="flex items-center gap-2 text-red-600 dark:text-red-500 font-medium text-sm">
+                                        <AlertCircle className="h-4 w-4" />
+                                        <span>Currently Sold Out</span>
+                                    </div>
+                                )}
+
                                 <Button
                                     size="xl"
                                     onClick={handleAddToCart}
-                                    disabled={adding}
-                                    className="w-full uppercase tracking-wider h-14"
+                                    disabled={adding || (product.stock !== undefined && product.stock === 0)}
+                                    className={`w-full uppercase tracking-wider h-14 transition-colors duration-300 ${product.stock !== undefined && product.stock === 0 ? 'bg-zinc-800 text-white/50 cursor-not-allowed' : 'bg-black text-white hover:bg-black/80 cursor-pointer'}`}
                                 >
-                                    {adding ? "Adding..." : `Add to Cart - $${product.price.toFixed(2)}`}
+                                    {product.stock !== undefined && product.stock === 0 ? "Sold Out" : adding ? "Adding..." : `Add to Cart - ${formatCurrency(product.offerPrice || product.price)}`}
                                 </Button>
                                 <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground bg-secondary/30 py-2 rounded-md">
                                     <ShoppingCart className="h-3 w-3" />
-                                    <span>Free shipping on orders over $150</span>
+                                    <span>Free shipping on orders over Rs. 15,000</span>
                                 </div>
                             </div>
                         </div>

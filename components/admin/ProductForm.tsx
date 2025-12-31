@@ -6,6 +6,8 @@ import { createProduct, updateProduct } from "@/lib/actions/product-actions";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
+import ImageUpload from "@/components/admin/ImageUpload";
+
 interface ProductFormProps {
     initialData?: any; // Using any for simplicity with mongoose doc, strictly should be typed
     isEdit?: boolean;
@@ -14,6 +16,7 @@ interface ProductFormProps {
 export function ProductForm({ initialData, isEdit = false }: ProductFormProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [imageUrl, setImageUrl] = useState(initialData?.images?.[0] || "");
 
     async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -24,6 +27,7 @@ export function ProductForm({ initialData, isEdit = false }: ProductFormProps) {
             name: formData.get("name") as string,
             description: formData.get("description") as string,
             price: parseFloat(formData.get("price") as string),
+            offerPrice: formData.get("offerPrice") ? parseFloat(formData.get("offerPrice") as string) : null,
             category: formData.get("category") as string,
             notes: {
                 top: formData.get("notes.top") as string,
@@ -35,6 +39,8 @@ export function ProductForm({ initialData, isEdit = false }: ProductFormProps) {
                 sillage: formData.get("details.sillage") as string,
                 concentration: formData.get("details.concentration") as string,
             },
+            stock: parseInt(formData.get("stock") as string) || 0,
+            showStock: formData.get("showStock") === "on",
             images: formData.get("imageUrl") ? [formData.get("imageUrl") as string] : [],
         };
 
@@ -69,6 +75,14 @@ export function ProductForm({ initialData, isEdit = false }: ProductFormProps) {
                         <input name="price" defaultValue={initialData?.price} type="number" step="0.01" required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" placeholder="0.00" />
                     </div>
                     <div className="grid gap-2">
+                        <label className="text-sm font-medium">Offer Price ($)</label>
+                        <input name="offerPrice" defaultValue={initialData?.offerPrice} type="number" step="0.01" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" placeholder="Optional" />
+                        <p className="text-[10px] text-muted-foreground">If set, this will be the selling price.</p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-2">
                         <label className="text-sm font-medium">Category</label>
                         <select name="category" defaultValue={initialData?.category} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                             <option value="Eau de Parfum">Eau de Parfum</option>
@@ -77,6 +91,19 @@ export function ProductForm({ initialData, isEdit = false }: ProductFormProps) {
                             <option value="Gift Set">Gift Set</option>
                             <option value="Set">Set</option>
                         </select>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                        <label className="text-sm font-medium">Stock Quantity</label>
+                        <input name="stock" type="number" min="0" defaultValue={initialData?.stock || 0} required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" placeholder="0" />
+                    </div>
+                    <div className="flex items-center space-x-2 pt-8">
+                        <input type="checkbox" name="showStock" id="showStock" className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" defaultChecked={initialData?.showStock ?? true} />
+                        <label htmlFor="showStock" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                            Show stock to users?
+                        </label>
                     </div>
                 </div>
 
@@ -122,14 +149,20 @@ export function ProductForm({ initialData, isEdit = false }: ProductFormProps) {
                 </div>
             </div>
 
-            <div className="space-y-4">
-                <h3 className="text-lg font-medium border-b border-border pb-2">Media</h3>
-                <div className="grid gap-2">
-                    <label className="text-sm font-medium">Image URL</label>
-                    <input name="imageUrl" defaultValue={initialData?.images?.[0]} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" placeholder="https://..." />
-                    <p className="text-xs text-muted-foreground">Provide a direct link to the product image.</p>
+                <div className="space-y-4">
+                    <h3 className="text-lg font-medium border-b border-border pb-2">Media</h3>
+                    <div className="grid gap-2">
+                        <label className="text-sm font-medium">Product Image</label>
+                        {/* Hidden input to store the URL for form submission */}
+                        <input type="hidden" name="imageUrl" value={imageUrl} />
+                        <ImageUpload 
+                            value={imageUrl} 
+                            onChange={(url) => setImageUrl(url)}
+                            onRemove={() => setImageUrl("")}
+                        />
+                        <p className="text-xs text-muted-foreground">Upload a product image. You can crop it before uploading.</p>
+                    </div>
                 </div>
-            </div>
 
             <div className="pt-4">
                 <Button type="submit" size="lg" className="w-full" disabled={loading}>

@@ -5,7 +5,7 @@ import { getProducts } from "@/lib/actions/product-actions";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "All Products | LUXE SCENTS",
+    title: "All Products | Atelier Voile",
     description: "Browse our complete collection of luxury fragrances.",
 };
 

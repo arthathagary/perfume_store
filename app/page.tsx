@@ -12,8 +12,11 @@ interface ProductWithId {
   _id: string;
   name: string;
   price: number;
+  offerPrice?: number;
   images?: string[];
   category: string;
+  stock?: number;
+  showStock?: boolean;
 }
 
 export const dynamic = "force-dynamic";
@@ -25,12 +28,15 @@ export default async function Home() {
     id: p._id.toString(),
     name: p.name,
     price: p.price,
+    offerPrice: p.offerPrice,
     image: getDirectImageUrl(p.images?.[0]),
-    category: p.category
+    category: p.category,
+    stock: p.stock,
+    showStock: p.showStock
   }));
 
   return (
-    <div className="flex min-h-screen flex-col font-sans bg-background">
+    <div className="flex min-h-screen flex-col font-sans bg-background text-foreground selection:bg-primary/20 selection:text-primary">
       <Header />
       <main className="flex-1">
         <Hero />
@@ -81,7 +87,7 @@ export default async function Home() {
               <h2 className="text-3xl md:text-5xl font-serif italic mb-10 text-white/90">"The Philosophy"</h2>
               <p className="text-xl md:text-2xl leading-relaxed text-white/70 font-light mb-12">
                 We believe perfume is more than a scent—it is an invisible aura, a memory written in the air.
-                Our blends use only the rarest ingredients, ethically sourced and aged to perfection in Grasse.
+                Our blends use only the rarest ingredients, ethically sourced and aged to perfection in Sri Lanka.
               </p>
               <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto border-t border-white/20 pt-10">
                 <div className="flex flex-col gap-2">
@@ -93,8 +99,8 @@ export default async function Home() {
                   <span className="text-[10px] uppercase tracking-widest text-white/50">Longevity</span>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <span className="text-3xl font-serif text-primary">fr</span>
-                  <span className="text-[10px] uppercase tracking-widest text-white/50">Made in France</span>
+                  <span className="text-3xl font-serif text-primary">SL</span>
+                  <span className="text-[10px] uppercase tracking-widest text-white/50">Made in Sri Lanka</span>
                 </div>
               </div>
             </ScrollReveal>

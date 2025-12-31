@@ -4,6 +4,7 @@ import { getDashboardStats } from "@/lib/actions/order-actions";
 import { getProductCount } from "@/lib/actions/product-actions";
 import { DollarSign, Package, ShoppingCart, Clock } from "lucide-react";
 import Link from "next/link";
+import { formatCurrency } from "@/lib/utils";
 
 export default async function AdminDashboard() {
     const session = await auth();
@@ -25,7 +26,7 @@ export default async function AdminDashboard() {
                         <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Total Revenue</h3>
                         <DollarSign className="h-4 w-4 text-muted-foreground" />
                     </div>
-                    <div className="text-2xl font-bold">${totalRevenue.toFixed(2)}</div>
+                    <div className="text-2xl font-bold">{formatCurrency(totalRevenue)}</div>
                 </div>
                 <div className="rounded-xl border border-border bg-background p-6 shadow-sm">
                     <div className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -92,7 +93,7 @@ export default async function AdminDashboard() {
                                                     {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                                                 </span>
                                             </td>
-                                            <td className="p-6 align-middle text-right">${order.total.toFixed(2)}</td>
+                                            <td className="p-6 align-middle text-right">{formatCurrency(order.total)}</td>
                                         </tr>
                                     ))
                                 )}

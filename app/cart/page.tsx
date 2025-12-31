@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Minus, Plus, X, Lock, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { getDirectImageUrl } from "@/lib/utils";
+import { getDirectImageUrl, formatCurrency } from "@/lib/utils";
 
 export default function CartPage() {
     const { items, removeItem, updateQuantity, totalAmount, totalItems } = useCart();
@@ -57,7 +57,7 @@ export default function CartPage() {
                                                         <div className="mt-1 flex text-sm">
                                                             <p className="text-muted-foreground">{item.concentration || "Eau de Parfum"}</p>
                                                         </div>
-                                                        <p className="mt-1 text-sm font-medium text-foreground">${item.price.toFixed(2)}</p>
+                                                        <p className="mt-1 text-sm font-medium text-foreground">{formatCurrency(item.price)}</p>
                                                     </div>
                                                     <div className="mt-4 sm:mt-0 sm:pr-9">
                                                         <div className="flex items-center border border-border rounded-sm w-fit">
@@ -101,23 +101,23 @@ export default function CartPage() {
                                     <div className="space-y-4">
                                         <div className="flex items-center justify-between">
                                             <dt className="text-sm text-muted-foreground">Subtotal</dt>
-                                            <dd className="text-sm font-medium text-foreground">${totalAmount.toFixed(2)}</dd>
+                                            <dd className="text-sm font-medium text-foreground">{formatCurrency(totalAmount)}</dd>
                                         </div>
                                         <div className="flex items-center justify-between border-t border-border pt-4">
                                             <dt className="text-sm text-muted-foreground">Shipping</dt>
                                             <dd className="text-sm font-medium text-foreground">
-                                                {totalAmount > 150 ? "Free" : "Calculated at Checkout"}
+                                                {totalAmount > 15000 ? "Free" : "Calculated at Checkout"}
                                             </dd>
                                         </div>
                                         <div className="flex items-center justify-between border-t border-border pt-4">
                                             <dt className="text-base font-medium text-foreground">Total</dt>
-                                            <dd className="text-base font-medium text-foreground">${totalAmount.toFixed(2)}</dd>
+                                            <dd className="text-base font-medium text-foreground">{formatCurrency(totalAmount)}</dd>
                                         </div>
                                     </div>
 
                                     <div className="mt-8">
                                         <Link href="/checkout">
-                                            <Button className="w-full h-12 text-sm uppercase tracking-wider">
+                                            <Button className="w-full h-12 text-sm uppercase tracking-wider bg-black text-white hover:bg-black/80 transition-colors duration-300 cursor-pointer">
                                                 Proceed to Checkout
                                             </Button>
                                         </Link>

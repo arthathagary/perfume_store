@@ -7,72 +7,54 @@
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  
+
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
-  
+
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
-  
+
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-  
+
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  
+
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  
+
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
-  
+
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
-  
+
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  
+
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
-  
+
   --font-sans: var(--font-outfit);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from { height: 0; }
+    to { height: var(--radix-accordion-content-height); }
+  }
+
+  @keyframes accordion-up {
+    from { height: var(--radix-accordion-content-height); }
+    to { height: 0; }
+  }
 }
 
 :root {
-  --background: 40 20% 98%; /* Warm off-white #faf9f6 */
-  --foreground: 0 0% 10%; /* Dark Charcoal */
-
-  --card: 0 0% 100%;
-  --card-foreground: 0 0% 10%;
-
-  --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 10%;
-
-  --primary: 0 0% 10%;
-  --primary-foreground: 40 20% 98%;
-
-  --secondary: 40 10% 94%;
-  --secondary-foreground: 0 0% 10%;
-
-  --muted: 40 10% 94%;
-  --muted-foreground: 0 0% 45%;
-
-  --accent: 40 20% 96%;
-  --accent-foreground: 0 0% 10%;
-
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 0 0% 98%;
-
-  --border: 0 0% 90%;
-  --input: 0 0% 90%;
-  --ring: 0 0% 10%;
-
-  --radius: 0rem; /* Sharp edges for luxury feel */
-}
-
-.dark {
+  /* Default to Dark Mode Luxury Theme */
   --background: 0 0% 3%;
   --foreground: 40 20% 98%;
 
@@ -100,12 +82,49 @@
   --border: 0 0% 16%;
   --input: 0 0% 16%;
   --ring: 0 0% 80%;
+
+  --radius: 0rem;
+  /* Sharp edges for luxury feel */
+}
+
+/* Optional: 'light' class if we ever want to force light mode, using the old values */
+.light {
+  --background: 40 20% 98%;
+  /* Warm off-white #faf9f6 */
+  --foreground: 0 0% 10%;
+  /* Dark Charcoal */
+
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 10%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 10%;
+
+  --primary: 0 0% 10%;
+  --primary-foreground: 40 20% 98%;
+
+  --secondary: 40 10% 94%;
+  --secondary-foreground: 0 0% 10%;
+
+  --muted: 40 10% 94%;
+  --muted-foreground: 0 0% 45%;
+
+  --accent: 40 20% 96%;
+  --accent-foreground: 0 0% 10%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 0 0% 90%;
+  --input: 0 0% 90%;
+  --ring: 0 0% 10%;
 }
 
 @layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
