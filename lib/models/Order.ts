@@ -17,6 +17,8 @@ const OrderSchema = new mongoose.Schema({
         quantity: Number,
     }],
     total: Number,
+    couponCode: String,
+    discountAmount: Number,
     status: {
         type: String,
         enum: ["pending", "processing", "shipped", "delivered", "cancelled"],

@@ -2,7 +2,6 @@
 
 import { useState, useCallback } from "react";
 import Cropper from "react-easy-crop";
-import { useUploadThing } from "@/lib/uploadthing"; // getting from lib might need adjustment if I only exported components
 import { generateReactHelpers } from "@uploadthing/react";
 import type { OurFileRouter } from "@/app/api/uploadthing/core";
 import { Button } from "@/components/ui/button";

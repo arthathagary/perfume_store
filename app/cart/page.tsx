@@ -8,9 +8,37 @@ import { Minus, Plus, X, Lock, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { getDirectImageUrl, formatCurrency } from "@/lib/utils";
+import { useState } from "react";
+import { validateCoupon } from "@/lib/actions/coupon-actions";
+import { Loader2, Tag } from "lucide-react";
 
 export default function CartPage() {
-    const { items, removeItem, updateQuantity, totalAmount, totalItems } = useCart();
+    const { items, removeItem, updateQuantity, totalAmount, totalItems, couponCode, discountAmount, applyCoupon, removeCoupon } = useCart();
+    const [promoCodeInput, setPromoCodeInput] = useState("");
+    const [couponLoading, setCouponLoading] = useState(false);
+    const [couponMessage, setCouponMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+
+    const handleApplyCoupon = async () => {
+        if (!promoCodeInput.trim()) return;
+        setCouponLoading(true);
+        setCouponMessage(null);
+
+        const result = await validateCoupon(promoCodeInput, totalAmount);
+
+        if (result.valid) {
+            applyCoupon(result.details.code, result.discountAmount);
+            setCouponMessage({ text: `Coupon applied: ${formatCurrency(result.discountAmount)} off`, type: "success" });
+            setPromoCodeInput("");
+        } else {
+            setCouponMessage({ text: result.message || "Invalid coupon", type: "error" });
+        }
+        setCouponLoading(false);
+    };
+
+    const handleRemoveCoupon = () => {
+        removeCoupon();
+        setCouponMessage(null);
+    };
 
     return (
         <div className="flex min-h-screen flex-col font-sans">
@@ -109,9 +137,52 @@ export default function CartPage() {
                                                 {totalAmount > 15000 ? "Free" : "Calculated at Checkout"}
                                             </dd>
                                         </div>
+
+                                        {/* Coupon Section */}
+                                        <div className="border-t border-border pt-4">
+                                            {couponCode ? (
+                                                <div className="flex items-center justify-between text-sm">
+                                                    <span className="text-muted-foreground flex items-center gap-2">
+                                                        <Tag className="h-3 w-3" />
+                                                        Coupon ({couponCode})
+                                                    </span>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-destructive font-medium">-{formatCurrency(discountAmount)}</span>
+                                                        <button onClick={handleRemoveCoupon} className="text-xs text-muted-foreground hover:text-foreground">
+                                                            <X className="h-3 w-3" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="space-y-2">
+                                                    <div className="flex gap-2">
+                                                        <input
+                                                            value={promoCodeInput}
+                                                            onChange={(e) => setPromoCodeInput(e.target.value)}
+                                                            placeholder="Promo Code"
+                                                            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                                        />
+                                                        <Button 
+                                                            variant="outline" 
+                                                            size="sm" 
+                                                            onClick={handleApplyCoupon}
+                                                            disabled={couponLoading || !promoCodeInput}
+                                                        >
+                                                            {couponLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Apply"}
+                                                        </Button>
+                                                    </div>
+                                                    {couponMessage && (
+                                                        <p className={`text-xs ${couponMessage.type === "success" ? "text-green-600" : "text-destructive"}`}>
+                                                            {couponMessage.text}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+
                                         <div className="flex items-center justify-between border-t border-border pt-4">
                                             <dt className="text-base font-medium text-foreground">Total</dt>
-                                            <dd className="text-base font-medium text-foreground">{formatCurrency(totalAmount)}</dd>
+                                            <dd className="text-base font-medium text-foreground">{formatCurrency(totalAmount - discountAmount)}</dd>
                                         </div>
                                     </div>
 

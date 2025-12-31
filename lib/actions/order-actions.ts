@@ -18,19 +18,49 @@ interface CreateOrderData {
     }[];
     total: number;
     status: string;
-    userId?: string; // Optional user link
+    userId?: string;
+    couponCode?: string;
 }
 
 import { Product } from "@/lib/models/Product";
+import { validateCoupon, recordCouponUsage } from "@/lib/actions/coupon-actions";
 
 export async function createOrder(data: CreateOrderData) {
     try {
         await dbConnect();
 
-        // 1. Create the Order
-        const order = await Order.create(data);
+        let finalTotal = data.total;
 
-        // 2. Reduce Stock for each item
+        // 1. Validate & Apply Coupon if present
+        if (data.couponCode) {
+            const validation = await validateCoupon(data.couponCode, data.total, data.customer.email);
+            if (!validation.valid) {
+                return { success: false, error: `Invalid Coupon: ${validation.message}` };
+            }
+            // Recalculate total just to be safe and authoritative
+            finalTotal = data.total - validation.discountAmount!;
+            
+            // Record Usage
+            // We need order ID first? No, recordCouponUsage takes orderId string.
+            // But we haven't created order yet.
+            // We should create order first, then record usage.
+        }
+
+        // 2. Create the Order
+        const orderPayload = {
+            ...data,
+            total: finalTotal,
+            discountAmount: data.total - finalTotal
+        };
+
+        const order = await Order.create(orderPayload);
+
+        // 3. Record Coupon Usage (Atomic-ish)
+        if (data.couponCode) {
+            await recordCouponUsage(data.couponCode, data.customer.email, order._id.toString(), data.userId);
+        }
+
+        // 4. Reduce Stock for each item
         for (const item of data.items) {
             await Product.findByIdAndUpdate(item.productId, {
                 $inc: { stock: -item.quantity }

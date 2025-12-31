@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Package, ShoppingCart, LogOut } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, LogOut, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
@@ -22,6 +22,11 @@ const NAV_ITEMS = [
         title: "Orders",
         href: "/admin/orders",
         icon: ShoppingCart,
+    },
+    {
+        title: "Coupons",
+        href: "/admin/coupons",
+        icon: Tag,
     },
 ];
 

@@ -19,6 +19,10 @@ interface CartContextType {
     clearCart: () => void;
     totalAmount: number;
     totalItems: number;
+    couponCode: string | null;
+    discountAmount: number;
+    applyCoupon: (code: string, discount: number) => void;
+    removeCoupon: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -81,11 +85,26 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setItems([]);
     };
 
+    const [couponCode, setCouponCode] = useState<string | null>(null);
+    const [discountAmount, setDiscountAmount] = useState(0);
+
+    // ... (rest of provider)
+
+    const applyCoupon = (code: string, discount: number) => {
+        setCouponCode(code);
+        setDiscountAmount(discount);
+    };
+
+    const removeCoupon = () => {
+        setCouponCode(null);
+        setDiscountAmount(0);
+    };
+
     const totalAmount = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
     return (
-        <CartContext.Provider value={{ items, addItem, removeItem, updateQuantity, clearCart, totalAmount, totalItems }}>
+        <CartContext.Provider value={{ items, addItem, removeItem, updateQuantity, clearCart, totalAmount, totalItems, couponCode, discountAmount, applyCoupon, removeCoupon }}>
             {children}
         </CartContext.Provider>
     );

@@ -14,7 +14,7 @@ import Image from "next/image";
 import { getUserProfile } from "@/lib/actions/user-actions";
 
 export default function CheckoutPage() {
-    const { items, totalAmount, clearCart } = useCart();
+    const { items, totalAmount, clearCart, couponCode } = useCart();
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [redirecting, setRedirecting] = useState(false);
@@ -107,7 +107,8 @@ export default function CheckoutPage() {
             })),
             total: totalAmount,
             status: "pending" as const,
-            userId // Link order to new user if created or existing user
+            userId, // Link order to new user if created or existing user
+            couponCode: couponCode || undefined
         };
 
         // Create Order in DB
